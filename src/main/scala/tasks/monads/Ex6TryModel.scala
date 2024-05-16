@@ -23,7 +23,7 @@ object Ex6TryModel:
 
   def success[A](value: A): Try[A] = TryImpl.Success(value)
   def failure[A](exception: Throwable): Try[A] = TryImpl.Failure(exception)
-  def exec[A](expression: => A): Try[A] = try success(expression) catch failure(_)
+  def exec[A](expression: => A): Try[A] = try success(expression) catch case e => failure(e)
 
   extension [A](m: Try[A]) 
     def getOrElse[B >: A](other: B): B = m match
@@ -31,12 +31,14 @@ object Ex6TryModel:
       case TryImpl.Failure(_) => other
 
   given Monad[Try] with
-    override def unit[A](value: A): Try[A] = ???
-    extension [A](m: Try[A]) 
+    override def unit[A](value: A): Try[A] = success(value)
 
-      override def flatMap[B](f: A => Try[B]): Try[B] = ??? 
-      
-@main def main: Unit = 
+    extension [A](m: Try[A])
+      override def flatMap[B](f: A => Try[B]): Try[B] = m match//???
+        case TryImpl.Success(a) => f(a)
+        case TryImpl.Failure(e) => failure(e)
+
+@main def main: Unit =
   import Ex6TryModel.*
 
   val result = for 

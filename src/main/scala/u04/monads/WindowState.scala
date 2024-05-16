@@ -20,10 +20,10 @@ object WindowStateImpl extends WindowState:
   type Window = Frame
   
   
-  def initialWindow: Window = createFrame
+  def initialWindow: Window = createFrame // createFrame ritorna la classe java FrameImpl
 
   def setSize(width: Int, height: Int): State[Window, Unit] = 
-    State(w => ((w.setSize(width, height)), {}))
+    State(w => ((w.setSize(width, height)), {})) // Perchè qui per definire la Unit ho {} mentre nel counter c'è ()?
   def addButton(text: String, name: String): State[Window, Unit] =
     State(w => ((w.addButton(text, name)), {}))
   def addLabel(text: String, name: String): State[Window, Unit] =
@@ -61,4 +61,4 @@ object WindowStateImpl extends WindowState:
         case "QuitButton" => exec(sys.exit())))
   yield ()
 
-  windowEventsHandling.run(initialWindow)
+  windowEventsHandling.run(initialWindow) //run da dove salta fuori????

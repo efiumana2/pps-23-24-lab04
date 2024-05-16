@@ -5,7 +5,7 @@ object SequenceADT:
   private enum SequenceImpl[E]:
     case Cons(head: E, tail: Sequence[E])
     case Nil()
-  import SequenceImpl.* 
+  import SequenceImpl.*
 
   // the type Sequence is an opaque alias to SequenceImpl
   opaque type Sequence[A] = SequenceImpl[A]

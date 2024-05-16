@@ -31,6 +31,7 @@ class SwingFunctionalFacade {
         private final JFrame jframe = new JFrame();
         private final Map<String, JButton> buttons = new HashMap<>();
         private final Map<String, JLabel> labels = new HashMap<>();
+        private final Map<String, JTextField> textFields = new HashMap<>();
         private final LinkedBlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
         private final Supplier<String> events = () -> {
             try{
@@ -70,7 +71,15 @@ class SwingFunctionalFacade {
             this.jframe.getContentPane().add(jl);
             return this;
         }
-
+/*
+        @Override
+        public Frame addTextField(String text, String name) {
+            var jl = new JTextField(text);
+            this.textFields.put(name, jl);
+            this.jframe.getContentPane().add(jl);
+            return this;
+        }
+*/
         @Override
         public Supplier<String> events() {
             return events;

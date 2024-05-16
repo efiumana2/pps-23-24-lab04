@@ -5,11 +5,12 @@ import States.*
 trait CounterState:
   type Counter
   def initialCounter(): Counter
-  def inc(): State[Counter, Unit]
-  def dec(): State[Counter, Unit]
+  def inc():   State[Counter, Unit]
+  def dec():   State[Counter, Unit]
   def reset(): State[Counter, Unit]
-  def get(): State[Counter, Int]
-  def nop(): State[Counter, Unit]
+  def get():   State[Counter, Int]
+  def nop():   State[Counter, Unit]
+  def set(v: Int):   State[Counter, Unit]
 
 object CounterStateImpl extends CounterState:
   opaque type Counter = Int
@@ -17,14 +18,16 @@ object CounterStateImpl extends CounterState:
   def initialCounter(): Counter = 0
 
   // giving (new_counter, result)
-  def inc(): State[Counter, Unit] = State(i => (i + 1, ()));
-  def dec(): State[Counter, Unit] = State(i => (i - 1, ()));
-  def reset(): State[Counter, Unit] = State(i => (0, ()));
-  def get(): State[Counter, Int] = State(i => (i, i));
-  def nop(): State[Counter, Unit] = State(i => (i, ()));
+  def inc():    State[Counter, Unit] = State(i => (i + 1, ()));
+  def dec():    State[Counter, Unit] = State(i => (i - 1, ()));
+  def reset():  State[Counter, Unit] = State(i => (0, ()));
+  def get():    State[Counter, Int]  = State(i => (i, i));
+  def nop():    State[Counter, Unit] = State(i => (i, ()));
+  def set(v: Int): State[Counter, Unit] = State(i => (v, ()));
 
 @main def tryCounterState =
-  import Monads.*, Monad.*, States.{*, given}, State.*
+  import Monads.*, Monad.*, States.{*}, State.*
+
   val counterState: CounterState = CounterStateImpl
   import counterState.*  // or directly, import CounterStateImpl.*
 
@@ -32,7 +35,9 @@ object CounterStateImpl extends CounterState:
     inc().run(initialCounter()) // ((),  1)
   println:
     seq(inc(), inc()).run(initialCounter()) // ((), 2)
-
+  println:
+    set(8).run(initialCounter()) // ((), 2)
+  
   def increment(n: Int): State[Counter, Unit] =
     if (n == 0)
     then nop()

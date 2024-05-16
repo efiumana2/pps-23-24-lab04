@@ -18,27 +18,40 @@ object Ex4Summables:
     def sum(a1: A, a2: A): A
     def zero: A
 
-  def sumAll[A: Summable](seq: Sequence[A]) = 
-    val summable = summon[Summable[A]]
-    ???  // complete here
+  object Summable:
+    def sumAll[A: Summable](seq: Sequence[A]):A =
+      val summable = summon[Summable[A]].sum // summable è la funzione da richiamare, una divers per ogni tipo
+      seq match
+        case Cons(a,Cons(b,t)) => sumAll(Cons(summable(a,b),t))
+        case Cons(a,Nil()) => a
+  //???  // complete here
+  object SummableGiven:
+    given Summable[Int] with
+      def sum(a1: Int, a2: Int): Int = a1 + a2
+      def zero: Int = 0
 
-  given Summable[Int] with
-    def sum(a1: Int, a2: Int): Int = a1 + a2
-    def zero: Int = 0
-  
+    given Summable[Double] with
+      def sum(a1: Double, a2: Double): Double = a1 + a2
+      def zero: Double = 0.0
+
+    given Summable[String] with
+      def sum(a1: String, a2: String): String = a1 + a2
+      def zero: String = ""
   // write givens for Summable[Double] and Summable[String]
 
   @main def trySummables =
-    val si = Cons(10, Cons(20, Cons(30, Nil())))  
+    import Ex4Summables.*, Summable.*
+    import SummableGiven.{* , given }
+    val si = Cons(10, Cons(20, Cons(30, Nil())))
     println:
       sumAllInt(si) // 60
 
-    /* uncomment from here   
+    // uncomment from here
 
     println:
       sumAll(si) // 60
 
-    val sd = Cons(10.0, Cons(20.0, Cons(30.0, Nil())))  
+    val sd = Cons(10.0, Cons(20.0, Cons(30.0, Nil())))
     println:
       sumAll(sd) // 60.0
 
@@ -46,5 +59,4 @@ object Ex4Summables:
     println:
       sumAll(ss) // "102030"
 
-    */  
 
